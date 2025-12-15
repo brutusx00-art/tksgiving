@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spence-Weikle Thanksgiving 2025</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Hero Section with Countdown -->
+        <div class="hero-card">
+            <h1>Speikles Thanksgiving </h1>
+            <p class="subtitle">November 27th, 2025 @ 3:00 PM EST</p>
+
+            <div class="countdown-container" id="countdown">
+                <div class="time-unit">
+                    <span class="time-value" id="days">00</span>
+                    <span class="time-label">Days</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="hours">00</span>
+                    <span class="time-label">Hours</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="minutes">00</span>
+                    <span class="time-label">Minutes</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="seconds">00</span>
+                    <span class="time-label">Seconds</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Potluck Section -->
+        <div class="potluck-grid">
+            <!-- Form Section -->
+            <div class="glass-card">
+                <h2>Join the Feast</h2>
+                <form id="potluckForm">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" required placeholder="e.g.  Uncle Dutch">
+                    </div>
+                    <div class="form-group">
+                        <label for="dish">What are you bringing?</label>
+                        <input type="text" id="dish" required placeholder="e.g. 1 can of PBR">
+                    </div>
+                    <button type="submit">I'm Bringing It!</button>
+                </form>
+            </div>
+
+            <!-- List Section -->
+            <div class="glass-card">
+                <h2>On the Menu</h2>
+                <ul class="dishes-list" id="dishesList">
+                    <!-- Items will be populated here -->
+                    <li class="dish-item" style="text-align: center; opacity: 0.5;">Loading dishes...</li>
+                </ul>
+            </div>
+            <div class="glass-card">
+                <h2>Cocktails</h2>
+                <h3>apple butter bourbon fizz </h3>
+                <h6>(bourbon, apple butter, lemon, ginger ale) </h6>
+                <h3>cranny mule</h3>
+                <h6>( gin, cranberry, ginger beer, lime) </h6>
+                <h3>flannel shirt</h3>
+                <h6>( scotch, apple cider, amaro, allspice dram, lemon juice) </h6>
+                <h3>toronto</h3>
+                <h6>( rye, fernet, maple, ango) </h6>
+                <h3>cider mimosa</h3>
+                <h6>( prosecco, apple cider) </h6>
+                <h3>holiday spritz</h3>
+                <h6>( prosecco, st germain, sweet vermouth, aperol)</h6>
+                <h3> </h3>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
