@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Countdown Logic ---
-    const targetDate = new Date('November 27, 2025 15:00:00 EST').getTime();
+    const targetDate = new Date('November 27, 2026 15:00:00 EST').getTime();
 
     function updateCountdown() {
         const now = new Date().getTime();
@@ -115,3 +115,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial load
     fetchDishes();
 });
+
