@@ -7,6 +7,7 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'dishes.json');
+const COCKTAIL_FILE = path.join(__dirname, 'cocktails.json');
 
 // Middleware
 app.use(cors());
@@ -27,6 +28,11 @@ if (!fs.existsSync(DATA_FILE)) {
     fs.writeFileSync(DATA_FILE, JSON.stringify([]));
 }
 
+// Initialize cocktails file if it doesn't exist
+if (!fs.existsSync(COCKTAIL_FILE)) {
+    fs.writeFileSync(COCKTAIL_FILE, JSON.stringify([]));
+}
+
 // Routes
 app.get('/api/dishes', (req, res) => {
     fs.readFile(DATA_FILE, 'utf8', (err, data) => {
@@ -39,9 +45,9 @@ app.get('/api/dishes', (req, res) => {
 });
 
 app.post('/api/dishes', (req, res) => {
-    const { name, dish } = req.body;
-    if (!name || !dish) {
-        return res.status(400).json({ error: 'Name and dish are required' });
+    const { name, dish, category } = req.body;
+    if (!name || !dish || !category) {
+        return res.status(400).json({ error: 'Name, dish, and category are required' });
     }
 
     fs.readFile(DATA_FILE, 'utf8', (err, data) => {
@@ -55,6 +61,7 @@ app.post('/api/dishes', (req, res) => {
             id: Date.now(),
             name,
             dish,
+            category,
             timestamp: new Date().toISOString()
         };
         dishes.push(newDish);
@@ -65,6 +72,110 @@ app.post('/api/dishes', (req, res) => {
                 return res.status(500).json({ error: 'Failed to save data' });
             }
             res.status(201).json(newDish);
+        });
+    });
+});
+
+app.delete('/api/dishes/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid dish ID' });
+    }
+
+    fs.readFile(DATA_FILE, 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Failed to read data' });
+        }
+
+        let dishes = JSON.parse(data);
+        const index = dishes.findIndex(d => d.id === id);
+        if (index === -1) {
+            return res.status(404).json({ error: 'Dish not found' });
+        }
+
+        dishes.splice(index, 1);
+
+        fs.writeFile(DATA_FILE, JSON.stringify(dishes, null, 2), (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: 'Failed to save data' });
+            }
+            res.json({ success: true });
+        });
+    });
+});
+
+// ==================== Cocktail Routes ====================
+
+app.get('/api/cocktails', (req, res) => {
+    fs.readFile(COCKTAIL_FILE, 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Failed to read data' });
+        }
+        res.json(JSON.parse(data));
+    });
+});
+
+app.post('/api/cocktails', (req, res) => {
+    const { name, cocktailName, ingredients } = req.body;
+    if (!name || !cocktailName || !ingredients) {
+        return res.status(400).json({ error: 'Name, cocktail name, and ingredients are required' });
+    }
+
+    fs.readFile(COCKTAIL_FILE, 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Failed to read data' });
+        }
+
+        const cocktails = JSON.parse(data);
+        const newCocktail = {
+            id: Date.now(),
+            name,
+            cocktailName,
+            ingredients,
+            timestamp: new Date().toISOString()
+        };
+        cocktails.push(newCocktail);
+
+        fs.writeFile(COCKTAIL_FILE, JSON.stringify(cocktails, null, 2), (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: 'Failed to save data' });
+            }
+            res.status(201).json(newCocktail);
+        });
+    });
+});
+
+app.delete('/api/cocktails/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid cocktail ID' });
+    }
+
+    fs.readFile(COCKTAIL_FILE, 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Failed to read data' });
+        }
+
+        let cocktails = JSON.parse(data);
+        const index = cocktails.findIndex(c => c.id === id);
+        if (index === -1) {
+            return res.status(404).json({ error: 'Cocktail not found' });
+        }
+
+        cocktails.splice(index, 1);
+
+        fs.writeFile(COCKTAIL_FILE, JSON.stringify(cocktails, null, 2), (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: 'Failed to save data' });
+            }
+            res.json({ success: true });
         });
     });
 });

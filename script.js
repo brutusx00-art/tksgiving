@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Countdown Logic ---
-    const targetDate = new Date('November 27, 2026 15:00:00 EST').getTime();
+    const targetDate = new Date('November 26, 2026 15:00:00 EST').getTime();
 
     function updateCountdown() {
         const now = new Date().getTime();
@@ -28,7 +28,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Potluck API Logic ---
     const form = document.getElementById('potluckForm');
     const dishesList = document.getElementById('dishesList');
-    const API_URL = 'api/dishes'; // Relative path to handle subdirectories/proxies
+    const API_URL = 'api/dishes';
+
+    const categoryLabels = {
+        turkey: '🦃 Turkey & Mains',
+        sides: '🥔 Sides',
+        desserts: '🥧 Desserts',
+        drinks: '🍻 Drinks',
+        other: '📦 Other'
+    };
+
+    const categoryOrder = ['turkey', 'sides', 'desserts', 'drinks', 'other'];
 
     function renderDishes(dishes) {
         dishesList.innerHTML = '';
@@ -37,15 +47,44 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Sort by newest first
-        dishes.sort((a, b) => b.id - a.id).forEach(item => {
-            const li = document.createElement('li');
-            li.className = 'dish-item';
-            li.innerHTML = `
-                <div class="dish-name">${escapeHtml(item.name)}</div>
-                <div class="dish-desc">is bringing ${escapeHtml(item.dish)}</div>
-            `;
-            dishesList.appendChild(li);
+        // Group by category
+        const grouped = {};
+        dishes.forEach(dish => {
+            const cat = dish.category || 'other';
+            if (!grouped[cat]) grouped[cat] = [];
+            grouped[cat].push(dish);
+        });
+
+        // Render each category
+        categoryOrder.forEach(cat => {
+            if (!grouped[cat] || grouped[cat].length === 0) return;
+
+            const categoryHeader = document.createElement('li');
+            categoryHeader.className = 'category-header';
+            categoryHeader.innerHTML = `<span class="category-label">${categoryLabels[cat]}</span>`;
+            dishesList.appendChild(categoryHeader);
+
+            // Sort by newest first within category
+            grouped[cat].sort((a, b) => b.id - a.id).forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'dish-item';
+                li.innerHTML = `
+                    <div class="dish-name">${escapeHtml(item.name)}</div>
+                    <div class="dish-desc">is bringing ${escapeHtml(item.dish)}</div>
+                    <button class="remove-btn" data-id="${item.id}" title="Remove this dish">✕</button>
+                `;
+                dishesList.appendChild(li);
+            });
+        });
+
+        // Add remove button listeners
+        document.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = e.target.dataset.id;
+                if (confirm('Remove this dish?')) {
+                    await removeDish(id);
+                }
+            });
         });
     }
 
@@ -70,10 +109,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function removeDish(id) {
+        try {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) throw new Error('Failed to remove dish');
+            await fetchDishes();
+        } catch (error) {
+            console.error('Error removing dish:', error);
+            alert('Failed to remove dish. Please try again.');
+        }
+    }
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const nameInput = document.getElementById('name');
         const dishInput = document.getElementById('dish');
+        const categoryInput = document.getElementById('category');
         const submitBtn = form.querySelector('button');
 
         const originalBtnText = submitBtn.innerText;
@@ -82,7 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const newDish = {
             name: nameInput.value,
-            dish: dishInput.value
+            dish: dishInput.value,
+            category: categoryInput.value
         };
 
         try {
@@ -99,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Clear form
             nameInput.value = '';
             dishInput.value = '';
+            categoryInput.value = '';
 
             // Refresh list
             await fetchDishes();
@@ -114,5 +169,105 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial load
     fetchDishes();
-});
 
+    // --- Cocktail Suggestion Logic ---
+    const cocktailForm = document.getElementById('cocktailForm');
+    const cocktailsList = document.getElementById('cocktailsList');
+    const COCKTAIL_API_URL = 'api/cocktails';
+
+    function renderCocktails(cocktails) {
+        cocktailsList.innerHTML = '';
+        if (cocktails.length === 0) {
+            cocktailsList.innerHTML = '<div class="cocktail-empty">No suggestions yet. Be the first!</div>';
+            return;
+        }
+
+        cocktails.sort((a, b) => b.id - a.id).forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'cocktail-card cocktail-suggested';
+            card.innerHTML = `
+                <span class="cocktail-icon">🍹</span>
+                <div class="cocktail-body">
+                    <div class="cocktail-name">${escapeHtml(item.cocktailName)}</div>
+                    <div class="cocktail-ingredients">${escapeHtml(item.ingredients)}</div>
+                    <div class="cocktail-suggested-by">Suggested by ${escapeHtml(item.name)}</div>
+                </div>
+                <button class="remove-btn" data-id="${item.id}" title="Remove this suggestion">✕</button>
+            `;
+            cocktailsList.appendChild(card);
+        });
+
+        document.querySelectorAll('#cocktailsList .remove-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = e.currentTarget.dataset.id;
+                if (confirm('Remove this cocktail suggestion?')) {
+                    await removeCocktail(id);
+                }
+            });
+        });
+    }
+
+    async function fetchCocktails() {
+        try {
+            const response = await fetch(COCKTAIL_API_URL);
+            if (!response.ok) throw new Error(`Status: ${response.status}`);
+            const cocktails = await response.json();
+            renderCocktails(cocktails);
+        } catch (error) {
+            console.error('Error fetching cocktails:', error);
+        }
+    }
+
+    async function removeCocktail(id) {
+        try {
+            const response = await fetch(`${COCKTAIL_API_URL}/${id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Failed to remove cocktail');
+            await fetchCocktails();
+        } catch (error) {
+            console.error('Error removing cocktail:', error);
+            alert('Failed to remove cocktail. Please try again.');
+        }
+    }
+
+    cocktailForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const suggesterInput = document.getElementById('cocktailSuggester');
+        const nameInput = document.getElementById('cocktailNameInput');
+        const ingInput = document.getElementById('cocktailIngredients');
+        const submitBtn = cocktailForm.querySelector('button');
+
+        const originalBtnText = submitBtn.innerText;
+        submitBtn.innerText = 'Adding...';
+        submitBtn.disabled = true;
+
+        const newCocktail = {
+            name: suggesterInput.value,
+            cocktailName: nameInput.value,
+            ingredients: ingInput.value
+        };
+
+        try {
+            const response = await fetch(COCKTAIL_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newCocktail),
+            });
+
+            if (!response.ok) throw new Error('Failed to add cocktail');
+
+            suggesterInput.value = '';
+            nameInput.value = '';
+            ingInput.value = '';
+
+            await fetchCocktails();
+        } catch (error) {
+            console.error('Error adding cocktail:', error);
+            alert('Failed to add your cocktail. Please try again.');
+        } finally {
+            submitBtn.innerText = originalBtnText;
+            submitBtn.disabled = false;
+        }
+    });
+
+    fetchCocktails();
+});

@@ -9,11 +9,24 @@
 </head>
 
 <body>
+    <!-- Falling Leaves -->
+    <div class="leaves-container" aria-hidden="true">
+        <span class="leaf" style="left:5%;animation-duration:12s;animation-delay:0s;--drift:80px">🍂</span>
+        <span class="leaf" style="left:15%;animation-duration:14s;animation-delay:2s;--drift:-60px">🍁</span>
+        <span class="leaf" style="left:28%;animation-duration:10s;animation-delay:4s;--drift:120px">🍂</span>
+        <span class="leaf" style="left:40%;animation-duration:16s;animation-delay:1s;--drift:-90px">🍁</span>
+        <span class="leaf" style="left:52%;animation-duration:13s;animation-delay:3s;--drift:70px">🍂</span>
+        <span class="leaf" style="left:65%;animation-duration:11s;animation-delay:5s;--drift:-100px">🍁</span>
+        <span class="leaf" style="left:78%;animation-duration:15s;animation-delay:0.5s;--drift:60px">🍂</span>
+        <span class="leaf" style="left:88%;animation-duration:12s;animation-delay:2.5s;--drift:-70px">🍁</span>
+        <span class="leaf" style="left:95%;animation-duration:14s;animation-delay:4.5s;--drift:90px">🍂</span>
+    </div>
+
     <div class="container">
         <!-- Hero Section with Countdown -->
         <div class="hero-card">
-            <h1>Speikles Thanksgiving </h1>
-            <p class="subtitle">November 27th, 2026 @ 3:00 PM EST</p>
+            <h1>Speikles Thanksgiving</h1>
+            <p class="subtitle">November 26th, 2026 @ 3:00 PM EST</p>
 
             <div class="countdown-container" id="countdown">
                 <div class="time-unit">
@@ -43,11 +56,22 @@
                 <form id="potluckForm">
                     <div class="form-group">
                         <label for="name">Your Name</label>
-                        <input type="text" id="name" required placeholder="e.g.  Uncle Dutch">
+                        <input type="text" id="name" required placeholder="e.g. Uncle Dutch">
                     </div>
                     <div class="form-group">
                         <label for="dish">What are you bringing?</label>
                         <input type="text" id="dish" required placeholder="e.g. 1 can of PBR">
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" required>
+                            <option value="">-- Select category --</option>
+                            <option value="turkey">🦃 Turkey & Mains</option>
+                            <option value="sides">🥔 Sides</option>
+                            <option value="desserts">🥧 Desserts</option>
+                            <option value="drinks">🍻 Drinks</option>
+                            <option value="other">📦 Other</option>
+                        </select>
                     </div>
                     <button type="submit">I'm Bringing It!</button>
                 </form>
@@ -61,27 +85,76 @@
                     <li class="dish-item" style="text-align: center; opacity: 0.5;">Loading dishes...</li>
                 </ul>
             </div>
+
+            <!-- Cocktails Section -->
             <div class="glass-card">
                 <h2>Cocktails</h2>
-                <h3>apple butter bourbon fizz </h3>
-                <h6>(bourbon, apple butter, lemon, ginger ale) </h6>
-                <h3>cranny mule</h3>
-                <h6>( gin, cranberry, ginger beer, lime) </h6>
-                <h3>flannel shirt</h3>
-                <h6>( scotch, apple cider, amaro, allspice dram, lemon juice) </h6>
-                <h3>toronto</h3>
-                <h6>( rye, fernet, maple, ango) </h6>
-                <h3>cider mimosa</h3>
-                <h6>( prosecco, apple cider) </h6>
-                <h3>holiday spritz</h3>
-                <h6>( prosecco, st germain, sweet vermouth, aperol)</h6>
-                <h3> </h3>
+                <div class="cocktail-list">
+                    <div class="cocktail-card">
+                        <span class="cocktail-icon">🥃</span>
+                        <div class="cocktail-body">
+                            <div class="cocktail-name">Apple Butter Bourbon Fizz</div>
+                            <div class="cocktail-ingredients">bourbon, apple butter, lemon, ginger ale</div>
+                        </div>
+                    </div>
+                    <div class="cocktail-card">
+                        <span class="cocktail-icon">🍸</span>
+                        <div class="cocktail-body">
+                            <div class="cocktail-name">Cranny Mule</div>
+                            <div class="cocktail-ingredients">gin, cranberry, ginger beer, lime</div>
+                        </div>
+                    </div>
+
+                    <div class="cocktail-card">
+                        <span class="cocktail-icon">🥃</span>
+                        <div class="cocktail-body">
+                            <div class="cocktail-name">Toronto</div>
+                            <div class="cocktail-ingredients">rye, fernet, maple, angostura bitters</div>
+                        </div>
+                    </div>
+                    <div class="cocktail-card">
+                        <span class="cocktail-icon">🥂</span>
+                        <div class="cocktail-body">
+                            <div class="cocktail-name">Cider Mimosa</div>
+                            <div class="cocktail-ingredients">prosecco, apple cider</div>
+                        </div>
+                    </div>
+                    <div class="cocktail-card">
+                        <span class="cocktail-icon">🥂</span>
+                        <div class="cocktail-body">
+                            <div class="cocktail-name">Holiday Spritz</div>
+                            <div class="cocktail-ingredients">prosecco, st germain, sweet vermouth, aperol</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cocktail-divider"></div>
+
+                <h3 class="cocktail-section-label">Family Suggestions</h3>
+                <div id="cocktailsList" class="cocktail-suggestions">
+                    <div class="cocktail-empty">No suggestions yet. Be the first!</div>
+                </div>
+
+                <form id="cocktailForm" class="cocktail-form">
+                    <div class="form-group">
+                        <label for="cocktailSuggester">Your Name</label>
+                        <input type="text" id="cocktailSuggester" required placeholder="e.g. Aunt Mary">
+                    </div>
+                    <div class="form-group">
+                        <label for="cocktailNameInput">Cocktail Name</label>
+                        <input type="text" id="cocktailNameInput" required placeholder="e.g. Pumpkin Spice Margarita">
+                    </div>
+                    <div class="form-group">
+                        <label for="cocktailIngredients">Ingredients</label>
+                        <input type="text" id="cocktailIngredients" required placeholder="e.g. tequila, pumpkin puree, lime, cinnamon">
+                    </div>
+                    <button type="submit">Suggest It!</button>
+                </form>
             </div>
         </div>
     </div>
 
     <script src="script.js"></script>
 </body>
-
 
 </html>
