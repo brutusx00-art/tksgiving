@@ -270,4 +270,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     fetchCocktails();
+
+    // --- Turkey Hot Tub Video Mute/Unmute ---
+    const turkeyVideo = document.getElementById('turkeyVideo');
+    const unmuteBtn = document.getElementById('videoUnmuteBtn');
+
+    unmuteBtn.addEventListener('click', () => {
+        turkeyVideo.muted = !turkeyVideo.muted;
+        unmuteBtn.textContent = turkeyVideo.muted ? '🔇' : '🔊';
+        unmuteBtn.setAttribute('aria-label', turkeyVideo.muted ? 'Unmute video' : 'Mute video');
+    });
 });
