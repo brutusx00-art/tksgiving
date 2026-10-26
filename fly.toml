@@ -9,6 +9,7 @@ primary_region = 'ewr'
 [mounts]
   source = "tksgiving_data"
   destination = "/data"
+  initial_size = "1gb"
 
 [build]
 
