@@ -6,8 +6,8 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_FILE = path.join(__dirname, 'dishes.json');
-const COCKTAIL_FILE = path.join(__dirname, 'cocktails.json');
+const DATA_FILE = '/data/dishes.json';
+const COCKTAIL_FILE = '/data/cocktails.json';
 
 // Middleware
 app.use(cors());
@@ -17,11 +17,17 @@ app.use(express.static(__dirname)); // Serve static files
 // Request Logging
 app.use((req, res, next) => {
     const log = `${new Date().toISOString()} - ${req.method} ${req.url}\n`;
-    fs.appendFile(path.join(__dirname, 'debug.log'), log, (err) => {
+    fs.appendFile('/data/debug.log', log, (err) => {
         if (err) console.error('Logging failed', err);
     });
     next();
 });
+
+// Ensure /data directory exists
+const dataDir = '/data';
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+}
 
 // Initialize data file if it doesn't exist
 if (!fs.existsSync(DATA_FILE)) {
