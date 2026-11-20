@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Countdown Logic ---
-    const targetDate = new Date('November 26, 2026 15:00:00 EST').getTime();
+    const targetDate = new Date('November 26, 2026 14:00:00 EST').getTime();
 
     function updateCountdown() {
         const now = new Date().getTime();
